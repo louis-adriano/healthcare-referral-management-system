@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
@@ -20,6 +20,7 @@ export function PatientReferralForm() {
     register,
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(FormSchema),
@@ -27,10 +28,13 @@ export function PatientReferralForm() {
 
   const { address, predictions, handleAddressChange, handlePredictionSelect } = usePredictiveAddress()
 
+  useEffect(() => {
+    console.log("Current predictions:", predictions)
+  }, [predictions])
+
   const onSubmit = async (data: FormData) => {
-    // Simulate API call
+    console.log("Form submitted with data:", data)
     await new Promise((resolve) => setTimeout(resolve, 1000))
-    console.log(data)
     setIsSubmitted(true)
   }
 
@@ -97,20 +101,33 @@ export function PatientReferralForm() {
         <label htmlFor="address" className="block text-sm font-medium text-gray-700">
           Address
         </label>
-        <Input id="address" value={address} onChange={handleAddressChange} placeholder="Start typing an address" />
+        <Input
+          id="address"
+          value={address}
+          onChange={(e) => {
+            handleAddressChange(e)
+            setValue("address", e.target.value)
+          }}
+          placeholder="Start typing an address"
+          className={errors.address ? "border-red-500" : ""}
+        />
         {predictions.length > 0 && (
           <ul className="mt-1 border border-gray-200 rounded-md">
-            {predictions.map((prediction, index) => (
+            {predictions.map((prediction) => (
               <li
-                key={index}
+                key={prediction.place_id}
                 className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={() => handlePredictionSelect(prediction)}
+                onClick={() => {
+                  handlePredictionSelect(prediction)
+                  setValue("address", prediction.description)
+                }}
               >
-                {prediction}
+                {prediction.description}
               </li>
             ))}
           </ul>
         )}
+        {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address.message}</p>}
       </div>
 
       <div>
@@ -159,6 +176,14 @@ export function PatientReferralForm() {
       <Button type="submit" className="w-full">
         Submit Referral
       </Button>
+
+      {/* Debugging information */}
+      <div className="mt-4 p-4 bg-gray-100 rounded-md">
+        <h3 className="font-bold">Debugging Info:</h3>
+        <p>Address: {address}</p>
+        <p>Predictions Count: {predictions.length}</p>
+        <p>Google Maps API Key: {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? "Set" : "Not Set"}</p>
+      </div>
     </form>
   )
 }

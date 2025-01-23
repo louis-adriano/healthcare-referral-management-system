@@ -6,6 +6,7 @@ export const FormSchema = z.object({
     required_error: "Date of birth is required",
     invalid_type_error: "Invalid date format",
   }),
+  address: z.string().min(1, "Address is required"),
   reasonForReferral: z.string().min(1, "Reason for referral is required"),
   urgencyLevel: z.enum(["Routine", "Urgent", "Emergency"], {
     required_error: "Urgency level is required",
