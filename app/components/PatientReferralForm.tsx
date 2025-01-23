@@ -177,13 +177,6 @@ export function PatientReferralForm() {
         Submit Referral
       </Button>
 
-      {/* Debugging information */}
-      <div className="mt-4 p-4 bg-gray-100 rounded-md">
-        <h3 className="font-bold">Debugging Info:</h3>
-        <p>Address: {address}</p>
-        <p>Predictions Count: {predictions.length}</p>
-        <p>Google Maps API Key: {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? "Set" : "Not Set"}</p>
-      </div>
     </form>
   )
 }
