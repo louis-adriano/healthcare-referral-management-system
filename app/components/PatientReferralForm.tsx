@@ -77,39 +77,75 @@ export function PatientReferralForm() {
 
       <div>
         <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">
-          Date of Birth
-        </label>
-        <Controller
-          control={control}
-          name="dateOfBirth"
-          render={({ field }) => (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-full justify-start text-left font-normal ${!field.value && "text-muted-foreground"}`}
-                >
-                  {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={field.value}
-                  onSelect={field.onChange}
-                  disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                  initialFocus
-                  captionLayout="dropdown-buttons"
-                  fromYear={1900}
-                  toYear={new Date().getFullYear()}
-                />
-              </PopoverContent>
-            </Popover>
-          )}
-        />
-        {errors.dateOfBirth && <p className="mt-1 text-sm text-red-500">{errors.dateOfBirth.message}</p>}
-      </div>
+    Date of Birth
+  </label>
+  <Controller
+    control={control}
+    name="dateOfBirth"
+    render={({ field }) => {
+      const [isOpen, setIsOpen] = useState(false); // Control popover visibility
+      const [currentMonth, setCurrentMonth] = useState(new Date()); // Track current month and year
+
+      const handleDateSelect = (date: Date | undefined) => {
+        field.onChange(date); // Update the selected date
+        setIsOpen(false); // Close the popover after date selection
+      };
+
+      const handleYearChange = (direction: "prev" | "next") => {
+        setCurrentMonth((prev) => {
+          const newDate = new Date(prev);
+          newDate.setFullYear(direction === "prev" ? prev.getFullYear() - 1 : prev.getFullYear() + 1);
+          return newDate;
+        });
+      };
+
+      return (
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={`w-full justify-start text-left font-normal ${
+                !field.value && "text-gray-400"
+              }`}
+            >
+              {field.value ? format(field.value, "PPP") : <span>Select a date</span>}
+              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full max-w-xs p-4 shadow-lg border bg-white rounded-md">
+            <div className="flex items-center justify-between mb-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleYearChange("prev")}
+              >
+                Previous Year
+              </Button>
+              <span className="font-medium text-gray-700">{currentMonth.getFullYear()}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleYearChange("next")}
+              >
+                Next Year
+              </Button>
+            </div>
+            <Calendar
+              mode="single"
+              selected={field.value}
+              onSelect={handleDateSelect} // Close popover on date selection
+              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+              month={currentMonth} // Dynamically set the month (and year)
+              onMonthChange={setCurrentMonth} // Sync internal state when navigating months
+              className="rounded-md shadow-sm"
+            />
+          </PopoverContent>
+        </Popover>
+      );
+    }}
+  />
+  {errors.dateOfBirth && <p className="mt-1 text-sm text-red-500">{errors.dateOfBirth.message}</p>}
+</div>
 
       <div>
         <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
