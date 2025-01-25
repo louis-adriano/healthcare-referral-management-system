@@ -48,17 +48,31 @@ export function PatientReferralForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div>
-        <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-          Full Name
-        </label>
-        <Input
-          id="fullName"
-          placeholder="Enter patient's full legal name"
-          {...register("fullName")}
-          className={errors.fullName ? "border-red-500" : ""}
-        />
-        {errors.fullName && <p className="mt-1 text-sm text-red-500">{errors.fullName.message}</p>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+            First Name
+          </label>
+          <Input
+            id="firstName"
+            placeholder="Enter patient's first name"
+            {...register("firstName")}
+            className={errors.firstName ? "border-red-500" : ""}
+          />
+          {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName.message}</p>}
+        </div>
+        <div>
+          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+            Last Name
+          </label>
+          <Input
+            id="lastName"
+            placeholder="Enter patient's last name"
+            {...register("lastName")}
+            className={errors.lastName ? "border-red-500" : ""}
+          />
+          {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName.message}</p>}
+        </div>
       </div>
 
       <div>
@@ -223,22 +237,26 @@ export function PatientReferralForm() {
         <Textarea id="clinicalNotes" placeholder="Add any additional clinical notes" {...register("clinicalNotes")} />
       </div>
 
-      <div className="flex items-center space-x-2">
-        <Controller
-          name="consentGiven"
-          control={control}
-          render={({ field }) => <Checkbox id="consentGiven" checked={field.value} onCheckedChange={field.onChange} />}
-        />
-        <label
-          htmlFor="consentGiven"
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          I confirm that I have obtained the patient's consent for this referral.
-        </label>
+      <div className="border-2 border-gray-300 rounded-md p-4 bg-gray-50">
+        <div className="flex items-center space-x-2">
+          <Controller
+            name="consentGiven"
+            control={control}
+            render={({ field }) => (
+              <Checkbox id="consentGiven" checked={field.value} onCheckedChange={field.onChange} />
+            )}
+          />
+          <label
+            htmlFor="consentGiven"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            I confirm that I have obtained the patient's consent for this referral.
+          </label>
+        </div>
+        {errors.consentGiven && <p className="mt-1 text-sm text-red-500">{errors.consentGiven.message}</p>}
       </div>
-      {errors.consentGiven && <p className="mt-1 text-sm text-red-500">{errors.consentGiven.message}</p>}
 
-      <Button type="submit" className="w-full">
+      <Button type="submit" className="w-full md:w-auto">
         Submit Referral
       </Button>
     </form>

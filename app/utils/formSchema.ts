@@ -3,7 +3,8 @@ import { z } from "zod"
 const phoneRegex = /^(?:\+61|0)[2-478](?:[ -]?[0-9]){8}$/
 
 export const FormSchema = z.object({
-  fullName: z.string().min(1, "Full name is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
   dateOfBirth: z.date({
     required_error: "Date of birth is required",
     invalid_type_error: "Invalid date format",
