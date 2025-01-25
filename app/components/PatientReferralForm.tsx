@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
@@ -11,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Checkbox } from "@/components/ui/checkbox"
 import { FormSchema, type FormData } from "../utils/formSchema"
 import { usePredictiveAddress } from "../hooks/usePredictiveAddress"
 
@@ -28,6 +27,10 @@ export function PatientReferralForm() {
   })
 
   const { address, predictions, handleAddressChange, handlePredictionSelect } = usePredictiveAddress()
+
+  useEffect(() => {
+    console.log("Current predictions:", predictions)
+  }, [predictions])
 
   const onSubmit = async (data: FormData) => {
     console.log("Form submitted with data:", data)
@@ -86,65 +89,12 @@ export function PatientReferralForm() {
                   onSelect={field.onChange}
                   disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                   initialFocus
-                  captionLayout="dropdown-buttons"
-                  fromYear={1900}
-                  toYear={new Date().getFullYear()}
                 />
               </PopoverContent>
             </Popover>
           )}
         />
         {errors.dateOfBirth && <p className="mt-1 text-sm text-red-500">{errors.dateOfBirth.message}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
-          Gender
-        </label>
-        <Controller
-          control={control}
-          name="gender"
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <SelectTrigger className={errors.gender ? "border-red-500" : ""}>
-                <SelectValue placeholder="Select gender" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Male">Male</SelectItem>
-                <SelectItem value="Female">Female</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
-        {errors.gender && <p className="mt-1 text-sm text-red-500">{errors.gender.message}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email
-        </label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="Enter patient's email"
-          {...register("email")}
-          className={errors.email ? "border-red-500" : ""}
-        />
-        {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
-          Phone Number
-        </label>
-        <Input
-          id="phoneNumber"
-          placeholder="Enter Australian phone number"
-          {...register("phoneNumber")}
-          className={errors.phoneNumber ? "border-red-500" : ""}
-        />
-        {errors.phoneNumber && <p className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</p>}
       </div>
 
       <div>
@@ -158,7 +108,7 @@ export function PatientReferralForm() {
             handleAddressChange(e)
             setValue("address", e.target.value)
           }}
-          placeholder="Start typing an Australian address"
+          placeholder="Start typing an address"
           className={errors.address ? "border-red-500" : ""}
         />
         {predictions.length > 0 && (
@@ -223,24 +173,10 @@ export function PatientReferralForm() {
         <Textarea id="clinicalNotes" placeholder="Add any additional clinical notes" {...register("clinicalNotes")} />
       </div>
 
-      <div className="flex items-center space-x-2">
-        <Controller
-          name="consentGiven"
-          control={control}
-          render={({ field }) => <Checkbox id="consentGiven" checked={field.value} onCheckedChange={field.onChange} />}
-        />
-        <label
-          htmlFor="consentGiven"
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          I confirm that I have obtained the patient's consent for this referral.
-        </label>
-      </div>
-      {errors.consentGiven && <p className="mt-1 text-sm text-red-500">{errors.consentGiven.message}</p>}
-
       <Button type="submit" className="w-full">
         Submit Referral
       </Button>
+
     </form>
   )
 }
