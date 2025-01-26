@@ -1,21 +1,17 @@
 import type { Metadata } from "next"
-import { Geist, Azeret_Mono as Geist_Mono } from "next/font/google"
+import { Geist } from "next/font/google"
 import "./globals.css"
+import { Header } from "./components/Header"
+import { Sidebar } from "./components/Sidebar"
 import { GoogleMapsScript } from "./components/GoogleMapsScript"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-})
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const geist = Geist({
   subsets: ["latin"],
 })
 
 export const metadata: Metadata = {
-  title: "Patient Referral Form",
-  description: "A form for patient referrals",
+  title: "Healthcare Referral Management System",
+  description: "A system for managing patient referrals",
 }
 
 export default function RootLayout({
@@ -24,9 +20,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={geist.className}>
       <body>
-        {children}
+        <div className="flex h-screen">
+          <Sidebar />
+          <div className="flex-1 flex flex-col">
+            <Header />
+            <main className="flex-1 overflow-y-auto bg-gray-200">{children}</main>
+          </div>
+        </div>
         <GoogleMapsScript />
       </body>
     </html>

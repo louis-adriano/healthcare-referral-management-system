@@ -49,10 +49,10 @@ export function PatientReferralForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-6 rounded-lg shadow">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="firstName" className="block text-sm font-bold text-gray-700">
             First Name
           </label>
           <Input
@@ -64,7 +64,7 @@ export function PatientReferralForm() {
           {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName.message}</p>}
         </div>
         <div>
-          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="lastName" className="block text-sm font-bold text-gray-700">
             Last Name
           </label>
           <Input
@@ -78,7 +78,7 @@ export function PatientReferralForm() {
       </div>
 
       <div>
-        <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="dateOfBirth" className="block text-sm font-bold text-gray-700">
           Date of Birth
         </label>
         <Controller
@@ -137,7 +137,7 @@ export function PatientReferralForm() {
       </div>
 
       <div>
-        <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="gender" className="block text-sm font-bold text-gray-700">
           Gender
         </label>
         <Controller
@@ -160,7 +160,7 @@ export function PatientReferralForm() {
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="email" className="block text-sm font-bold text-gray-700">
           Email
         </label>
         <Input
@@ -174,7 +174,7 @@ export function PatientReferralForm() {
       </div>
 
       <div>
-        <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="phoneNumber" className="block text-sm font-bold text-gray-700">
           Phone Number
         </label>
         <Input
@@ -187,7 +187,7 @@ export function PatientReferralForm() {
       </div>
 
       <div>
-        <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="address" className="block text-sm font-bold text-gray-700">
           Address
         </label>
         <Input
@@ -220,7 +220,7 @@ export function PatientReferralForm() {
       </div>
 
       <div>
-        <label htmlFor="reasonForReferral" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="reasonForReferral" className="block text-sm font-bold text-gray-700">
           Reason for Referral
         </label>
         <Textarea
@@ -233,7 +233,7 @@ export function PatientReferralForm() {
       </div>
 
       <div>
-        <label htmlFor="urgencyLevel" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="urgencyLevel" className="block text-sm font-bold text-gray-700">
           Urgency Level
         </label>
         <Controller
@@ -256,7 +256,7 @@ export function PatientReferralForm() {
       </div>
 
       <div>
-        <label htmlFor="clinicalNotes" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="clinicalNotes" className="block text-sm font-bold text-gray-700">
           Clinical Notes
         </label>
         <Textarea id="clinicalNotes" placeholder="Add any additional clinical notes" {...register("clinicalNotes")} />
@@ -273,7 +273,7 @@ export function PatientReferralForm() {
           />
           <label
             htmlFor="consentGiven"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="text-sm font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             I confirm that I have obtained the patient&apos;s consent for this referral.
           </label>
