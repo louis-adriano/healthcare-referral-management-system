@@ -11,9 +11,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { FormSchema, type FormData } from "../utils/formSchema"
 import { usePredictiveAddress } from "../hooks/usePredictiveAddress"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
+import { v4 as uuidv4 } from "uuid"
+import type { Referral } from "@/app/utils/mockReferrals"
 
 export function PatientReferralForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const { toast } = useToast()
+  const router = useRouter()
+
   const {
     register,
     control,
@@ -27,9 +34,30 @@ export function PatientReferralForm() {
   const { address, predictions, handleAddressChange, handlePredictionSelect } = usePredictiveAddress()
 
   const onSubmit = async (data: FormData) => {
-    console.log("Form submitted with data:", data)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const newReferral: Referral = {
+      id: uuidv4(),
+      patientName: `${data.firstName} ${data.lastName}`,
+      dateSubmitted: new Date().toISOString().split("T")[0],
+      status: "Pending",
+      urgencyLevel: data.urgencyLevel,
+      specialistType: data.reasonForReferral,
+      outcome: "",
+      feedback: "",
+    }
+
+    const existingReferrals: Referral[] = JSON.parse(localStorage.getItem("referrals") || "[]")
+    const updatedReferrals = [newReferral, ...existingReferrals]
+    localStorage.setItem("referrals", JSON.stringify(updatedReferrals))
+
+    toast({
+      title: "Referral Submitted",
+      description: `New referral created for ${newReferral.patientName}`,
+    })
+
     setIsSubmitted(true)
+    setTimeout(() => {
+      router.push("/referrals")
+    }, 2000)
   }
 
   if (isSubmitted) {
@@ -38,6 +66,7 @@ export function PatientReferralForm() {
         <div className="text-center">
           <CheckCircle2 className="mx-auto h-16 w-16 text-green-500" />
           <h2 className="mt-4 text-2xl font-semibold">Referral created successfully!</h2>
+          <p>Redirecting to referrals page...</p>
         </div>
       </div>
     )
