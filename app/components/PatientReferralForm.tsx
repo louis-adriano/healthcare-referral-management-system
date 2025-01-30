@@ -40,7 +40,7 @@ export function PatientReferralForm() {
       dateSubmitted: new Date().toISOString().split("T")[0],
       status: "Pending",
       urgencyLevel: data.urgencyLevel,
-      specialistType: data.reasonForReferral,
+      reasonForReferral: data.reasonForReferral,
       outcome: "",
       feedback: "",
     }

@@ -232,23 +232,25 @@ export default function ReferralsPage() {
                   <p className="text-sm font-medium text-gray-500">Urgency Level</p>
                   <p className="mt-1">{selectedReferral.urgencyLevel}</p>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Specialist Type</p>
-                  <p className="mt-1">{selectedReferral.specialistType}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Last Updated</p>
-                  <p className="mt-1">{new Date().toLocaleString()}</p>
-                </div>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Reason for Referral</p>
-                <p className="mt-1">{selectedReferral.feedback || "No reason provided."}</p>
+                <p className="mt-1">{selectedReferral.reasonForReferral || "-"}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Clinical Notes</p>
+                <p className="mt-1">{selectedReferral.clinicalNotes || "-"}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Outcome</p>
                 <p className="mt-1">{selectedReferral.outcome || "No outcome recorded yet."}</p>
               </div>
+              {selectedReferral.feedback && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Feedback</p>
+                  <p className="mt-1">{selectedReferral.feedback}</p>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
