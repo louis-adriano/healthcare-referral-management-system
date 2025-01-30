@@ -41,6 +41,7 @@ export function PatientReferralForm() {
       status: "Pending",
       urgencyLevel: data.urgencyLevel,
       reasonForReferral: data.reasonForReferral,
+      clinicalNotes: data.clinicalNotes || "-",
       outcome: "",
       feedback: "",
     }

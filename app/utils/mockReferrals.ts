@@ -5,9 +5,9 @@ export interface Referral {
     status: "Pending" | "In Progress" | "Completed" | "Cancelled"
     urgencyLevel: "Routine" | "Urgent" | "Emergency"
     reasonForReferral: string
+    clinicalNotes: string
     outcome?: string
     feedback?: string
-    clinicalNotes?: string
   }
   
   export const mockReferrals: Referral[] = [
@@ -18,10 +18,10 @@ export interface Referral {
       status: "In Progress",
       urgencyLevel: "Urgent",
       reasonForReferral: "Severe anxiety and depression symptoms requiring immediate psychiatric evaluation",
-      outcome: "Initial assessment completed. Follow-up appointment scheduled.",
-      feedback: "Patient shows signs of severe anxiety. Recommend cognitive behavioral therapy.",
       clinicalNotes:
         "Patient reports difficulty sleeping, loss of appetite, and frequent panic attacks. Consider medication options.",
+      outcome: "Initial assessment completed. Follow-up appointment scheduled.",
+      feedback: "Patient shows signs of severe anxiety. Recommend cognitive behavioral therapy.",
     },
     {
       id: "2",
@@ -30,10 +30,10 @@ export interface Referral {
       status: "Completed",
       urgencyLevel: "Routine",
       reasonForReferral: "Annual cardiac check-up",
-      outcome: "No significant cardiac issues found. Lifestyle changes recommended.",
-      feedback: "Suggest follow-up in 6 months for routine check.",
       clinicalNotes:
         "Patient's blood pressure slightly elevated. Recommend diet modifications and increased physical activity.",
+      outcome: "No significant cardiac issues found. Lifestyle changes recommended.",
+      feedback: "Suggest follow-up in 6 months for routine check.",
     },
     {
       id: "3",
@@ -42,9 +42,9 @@ export interface Referral {
       status: "Pending",
       urgencyLevel: "Emergency",
       reasonForReferral: "Sudden onset of severe headache and vision changes",
-      outcome: "Awaiting initial consultation.",
       clinicalNotes:
         "Patient reports worst headache of life. Conduct immediate neurological examination and consider CT scan.",
+      outcome: "Awaiting initial consultation.",
     },
     {
       id: "4",
@@ -53,8 +53,8 @@ export interface Referral {
       status: "Cancelled",
       urgencyLevel: "Routine",
       reasonForReferral: "Persistent skin rash not responding to over-the-counter treatments",
-      outcome: "Patient cancelled the appointment.",
       clinicalNotes: "Patient described rash as itchy and spreading. Consider allergy testing if rescheduled.",
+      outcome: "Patient cancelled the appointment.",
     },
     {
       id: "5",
@@ -63,8 +63,8 @@ export interface Referral {
       status: "In Progress",
       urgencyLevel: "Urgent",
       reasonForReferral: "Abnormal mammogram results requiring further investigation",
-      outcome: "Initial tests conducted. Awaiting results for further diagnosis.",
       clinicalNotes: "Mammogram showed suspicious mass in left breast. Scheduled for biopsy next week.",
+      outcome: "Initial tests conducted. Awaiting results for further diagnosis.",
     },
   ]
   
