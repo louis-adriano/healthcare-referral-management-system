@@ -13,9 +13,10 @@ import { useToast } from "@/hooks/use-toast"
 export default function ReferralsPage() {
   const [referrals, setReferrals] = useState<Referral[]>([])
   const [selectedReferral, setSelectedReferral] = useState<Referral | null>(null)
-  const [sortBy, setSortBy] = useState<"patientName" | "dateSubmitted" | "status">("dateSubmitted")
+  const [searchQuery, setSearchQuery] = useState("")
   const [filterStatus, setFilterStatus] = useState<string>("all")
   const [filterDateRange, setFilterDateRange] = useState<{ start: string; end: string }>({ start: "", end: "" })
+  const [sortBy, setSortBy] = useState<string>("dateDesc")
   const { toast } = useToast()
   const router = useRouter()
 
@@ -42,18 +43,28 @@ export default function ReferralsPage() {
     }
   }, [])
 
-  const sortedReferrals = [...referrals].sort((a, b) => {
-    if (sortBy === "patientName") return a.patientName.localeCompare(b.patientName)
-    if (sortBy === "dateSubmitted") return new Date(b.dateSubmitted).getTime() - new Date(a.dateSubmitted).getTime()
-    return a.status.localeCompare(b.status)
-  })
-
-  const filteredReferrals = sortedReferrals.filter((referral) => {
-    if (filterStatus !== "all" && referral.status !== filterStatus) return false
-    if (filterDateRange.start && new Date(referral.dateSubmitted) < new Date(filterDateRange.start)) return false
-    if (filterDateRange.end && new Date(referral.dateSubmitted) > new Date(filterDateRange.end)) return false
-    return true
-  })
+  const filteredReferrals = referrals
+    .filter((referral) => {
+      const matchesSearch = referral.patientName.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesStatus = filterStatus === "all" || referral.status === filterStatus
+      const matchesDateRange =
+        (!filterDateRange.start || new Date(referral.dateSubmitted) >= new Date(filterDateRange.start)) &&
+        (!filterDateRange.end || new Date(referral.dateSubmitted) <= new Date(filterDateRange.end))
+      return matchesSearch && matchesStatus && matchesDateRange
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "nameAsc":
+          return a.patientName.localeCompare(b.patientName)
+        case "nameDesc":
+          return b.patientName.localeCompare(a.patientName)
+        case "dateAsc":
+          return new Date(a.dateSubmitted).getTime() - new Date(b.dateSubmitted).getTime()
+        case "dateDesc":
+        default:
+          return new Date(b.dateSubmitted).getTime() - new Date(a.dateSubmitted).getTime()
+      }
+    })
 
   const handleStatusChange = (referralId: string, newStatus: Referral["status"]) => {
     setReferrals(
@@ -86,16 +97,13 @@ export default function ReferralsPage() {
       </div>
 
       <div className="mb-4 flex flex-wrap gap-4 bg-white p-4 rounded-lg shadow-sm">
-        <Select onValueChange={(value) => setSortBy(value as typeof sortBy)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="patientName">Patient Name</SelectItem>
-            <SelectItem value="dateSubmitted">Date Submitted</SelectItem>
-            <SelectItem value="status">Status</SelectItem>
-          </SelectContent>
-        </Select>
+        <Input
+          type="text"
+          placeholder="Search patients"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-[200px]"
+        />
 
         <Select onValueChange={setFilterStatus}>
           <SelectTrigger className="w-[180px]">
@@ -122,6 +130,18 @@ export default function ReferralsPage() {
           onChange={(e) => setFilterDateRange({ ...filterDateRange, end: e.target.value })}
           className="w-[180px]"
         />
+
+        <Select onValueChange={setSortBy} defaultValue="dateDesc">
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="nameAsc">Name (A-Z)</SelectItem>
+            <SelectItem value="nameDesc">Name (Z-A)</SelectItem>
+            <SelectItem value="dateAsc">Date (Oldest first)</SelectItem>
+            <SelectItem value="dateDesc">Date (Newest first)</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
