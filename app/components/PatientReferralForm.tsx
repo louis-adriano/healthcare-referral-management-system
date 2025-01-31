@@ -18,6 +18,8 @@ import type { Referral } from "@/app/utils/mockReferrals"
 
 export function PatientReferralForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [showJson, setShowJson] = useState(false)
+  const [jsonData, setJsonData] = useState<string>("")
   const { toast } = useToast()
   const router = useRouter()
 
@@ -26,6 +28,7 @@ export function PatientReferralForm() {
     control,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(FormSchema),
@@ -59,6 +62,12 @@ export function PatientReferralForm() {
     setTimeout(() => {
       router.push("/referrals")
     }, 2000)
+  }
+
+  const handleViewJson = () => {
+    const formData = watch()
+    setJsonData(JSON.stringify(formData, null, 2))
+    setShowJson(true)
   }
 
   if (isSubmitted) {
@@ -269,9 +278,20 @@ export function PatientReferralForm() {
         {errors.consentGiven && <p className="mt-1 text-sm text-red-500">{errors.consentGiven.message}</p>}
       </div>
 
-      <Button type="submit" className="w-full md:w-auto">
-        Submit Referral
-      </Button>
+      <div className="flex space-x-4">
+        <Button type="submit" className="w-full md:w-auto">
+          Submit Referral
+        </Button>
+        <Button type="button" onClick={handleViewJson} className="w-full md:w-auto">
+          View JSON
+        </Button>
+      </div>
+
+      {showJson && (
+        <div className="mt-4 p-4 bg-gray-100 rounded-md">
+          <pre>{jsonData}</pre>
+        </div>
+      )}
     </form>
   )
 }
