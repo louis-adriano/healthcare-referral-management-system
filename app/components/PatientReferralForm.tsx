@@ -273,7 +273,7 @@ export function PatientReferralForm() {
             htmlFor="consentGiven"
             className="text-sm font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
-            I confirm that I have obtained the patient's consent for this referral.
+            I confirm that I have obtained the patient&apos;s consent for this referral.
           </label>
         </div>
         {errors.consentGiven && <p className="mt-1 text-sm text-red-500">{errors.consentGiven.message}</p>}
