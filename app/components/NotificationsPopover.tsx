@@ -7,13 +7,14 @@ import { useNotifications } from "../context/notifications-context"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
+import type { Notification } from "../context/notifications-context"
 
 export function NotificationsPopover() {
   const { state, dispatch } = useNotifications()
   const router = useRouter()
   const unreadCount = state.notifications.filter((n) => !n.read).length
 
-  const handleNotificationClick = (notification: any) => {
+  const handleNotificationClick = (notification: Notification) => {
     dispatch({ type: "MARK_AS_READ", payload: notification.id })
     router.push(`/referrals?id=${notification.referralId}`)
   }
