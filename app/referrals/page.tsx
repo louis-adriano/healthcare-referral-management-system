@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Bell, Plus, ArrowLeft } from "lucide-react"
+import { Bell, Plus, ArrowLeft, Copy } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export default function ReferralsPage() {
@@ -17,6 +17,8 @@ export default function ReferralsPage() {
   const [filterStatus, setFilterStatus] = useState<string>("all")
   const [filterDateRange, setFilterDateRange] = useState<{ start: string; end: string }>({ start: "", end: "" })
   const [sortBy, setSortBy] = useState<string>("dateDesc")
+  const [showJson, setShowJson] = useState(false)
+  const [copyFeedback, setCopyFeedback] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -80,6 +82,19 @@ export default function ReferralsPage() {
         return ref
       }),
     )
+  }
+
+  const handleDialogClose = () => {
+    setSelectedReferral(null)
+    setShowJson(false)
+  }
+
+  const handleCopyJson = () => {
+    if (selectedReferral) {
+      navigator.clipboard.writeText(JSON.stringify(selectedReferral, null, 2))
+      setCopyFeedback(true)
+      setTimeout(() => setCopyFeedback(false), 2000)
+    }
   }
 
   return (
@@ -205,7 +220,7 @@ export default function ReferralsPage() {
         </table>
       </div>
 
-      <Dialog open={!!selectedReferral} onOpenChange={(open) => !open && setSelectedReferral(null)}>
+      <Dialog open={!!selectedReferral} onOpenChange={handleDialogClose}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <div className="flex items-center relative">
@@ -221,57 +236,81 @@ export default function ReferralsPage() {
             </div>
           </DialogHeader>
           {selectedReferral && (
-            <div className="grid gap-6 mt-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Patient Name</p>
-                  <p className="mt-1">{selectedReferral.patientName}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Status</p>
-                  <Select
-                    onValueChange={(value) => handleStatusChange(selectedReferral.id, value as Referral["status"])}
-                    defaultValue={selectedReferral.status}
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Pending">Pending</SelectItem>
-                      <SelectItem value="In Progress">In Progress</SelectItem>
-                      <SelectItem value="Completed">Completed</SelectItem>
-                      <SelectItem value="Cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Date Submitted</p>
-                  <p className="mt-1">{selectedReferral.dateSubmitted}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Urgency Level</p>
-                  <p className="mt-1">{selectedReferral.urgencyLevel}</p>
+            <>
+              <div className="max-h-[60vh] overflow-y-auto pr-2">
+                <div className="grid gap-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Patient Name</p>
+                      <p className="mt-1">{selectedReferral.patientName}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Status</p>
+                      <Select
+                        onValueChange={(value) => handleStatusChange(selectedReferral.id, value as Referral["status"])}
+                        defaultValue={selectedReferral.status}
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Pending">Pending</SelectItem>
+                          <SelectItem value="In Progress">In Progress</SelectItem>
+                          <SelectItem value="Completed">Completed</SelectItem>
+                          <SelectItem value="Cancelled">Cancelled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Date Submitted</p>
+                      <p className="mt-1">{selectedReferral.dateSubmitted}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Urgency Level</p>
+                      <p className="mt-1">{selectedReferral.urgencyLevel}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Reason for Referral</p>
+                    <p className="mt-1">{selectedReferral.reasonForReferral || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Clinical Notes</p>
+                    <p className="mt-1">{selectedReferral.clinicalNotes || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Outcome</p>
+                    <p className="mt-1">{selectedReferral.outcome || "No outcome recorded yet."}</p>
+                  </div>
+                  {selectedReferral.feedback && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Feedback</p>
+                      <p className="mt-1">{selectedReferral.feedback}</p>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Reason for Referral</p>
-                <p className="mt-1">{selectedReferral.reasonForReferral || "-"}</p>
+              <div className="mt-6 flex items-center space-x-2">
+                <Button variant="default" onClick={() => setShowJson(!showJson)}>
+                  {showJson ? "Hide JSON" : "View JSON"}
+                </Button>
+                {showJson && (
+                  <Button variant="outline" size="sm" className="flex items-center space-x-1" onClick={handleCopyJson}>
+                    <Copy className="h-4 w-4" />
+                    <span>{copyFeedback ? "Copied!" : "Copy JSON"}</span>
+                  </Button>
+                )}
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Clinical Notes</p>
-                <p className="mt-1">{selectedReferral.clinicalNotes || "-"}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Outcome</p>
-                <p className="mt-1">{selectedReferral.outcome || "No outcome recorded yet."}</p>
-              </div>
-              {selectedReferral.feedback && (
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Feedback</p>
-                  <p className="mt-1">{selectedReferral.feedback}</p>
+              {showJson && (
+                <div className="mt-4">
+                  <textarea
+                    readOnly
+                    className="w-full h-48 p-2 text-sm font-mono bg-gray-100 border rounded resize-none"
+                    value={JSON.stringify(selectedReferral, null, 2)}
+                  />
                 </div>
               )}
-            </div>
+            </>
           )}
         </DialogContent>
       </Dialog>

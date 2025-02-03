@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { CheckCircle2 } from "lucide-react"
+import { CheckCircle2, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -19,7 +19,7 @@ import type { Referral } from "@/app/utils/mockReferrals"
 export function PatientReferralForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [showJson, setShowJson] = useState(false)
-  const [jsonData, setJsonData] = useState<string>("")
+  const [copyFeedback, setCopyFeedback] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -64,10 +64,11 @@ export function PatientReferralForm() {
     }, 2000)
   }
 
-  const handleViewJson = () => {
+  const handleCopyJson = () => {
     const formData = watch()
-    setJsonData(JSON.stringify(formData, null, 2))
-    setShowJson(true)
+    navigator.clipboard.writeText(JSON.stringify(formData, null, 2))
+    setCopyFeedback(true)
+    setTimeout(() => setCopyFeedback(false), 2000)
   }
 
   if (isSubmitted) {
@@ -272,7 +273,7 @@ export function PatientReferralForm() {
             htmlFor="consentGiven"
             className="text-sm font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
-            I confirm that I have obtained the patient&apos;s consent for this referral.
+            I confirm that I have obtained the patient's consent for this referral.
           </label>
         </div>
         {errors.consentGiven && <p className="mt-1 text-sm text-red-500">{errors.consentGiven.message}</p>}
@@ -282,14 +283,24 @@ export function PatientReferralForm() {
         <Button type="submit" className="w-full md:w-auto">
           Submit Referral
         </Button>
-        <Button type="button" onClick={handleViewJson} className="w-full md:w-auto">
-          View JSON
+        <Button type="button" onClick={() => setShowJson(!showJson)} className="w-full md:w-auto">
+          {showJson ? "Hide JSON" : "View JSON"}
         </Button>
+        {showJson && (
+          <Button
+            type="button"
+            onClick={handleCopyJson}
+            className="w-full md:w-auto flex items-center space-x-1"
+            variant="outline"
+          >
+            <Copy className="h-4 w-4" />
+            <span>{copyFeedback ? "Copied!" : "Copy JSON"}</span>
+          </Button>
+        )}
       </div>
-
       {showJson && (
         <div className="mt-4 p-4 bg-gray-100 rounded-md">
-          <pre>{jsonData}</pre>
+          <pre className="whitespace-pre-wrap">{JSON.stringify(watch(), null, 2)}</pre>
         </div>
       )}
     </form>
