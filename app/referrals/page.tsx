@@ -1,14 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { mockReferrals, type Referral } from "@/app/utils/mockReferrals"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Bell, Plus, ArrowLeft, Copy } from "lucide-react"
+import { Plus, ArrowLeft, Copy } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { useNotifications } from "../context/notifications-context"
+import { v4 as uuidv4 } from "uuid"
 
 export default function ReferralsPage() {
   const [referrals, setReferrals] = useState<Referral[]>([])
@@ -21,6 +23,9 @@ export default function ReferralsPage() {
   const [copyFeedback, setCopyFeedback] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
+  const { dispatch } = useNotifications()
+  const searchParams = useSearchParams()
+  const selectedId = searchParams.get("id")
 
   useEffect(() => {
     const loadReferrals = () => {
@@ -44,6 +49,15 @@ export default function ReferralsPage() {
       window.removeEventListener("storage", loadReferrals)
     }
   }, [])
+
+  useEffect(() => {
+    if (selectedId) {
+      const referral = referrals.find((r) => r.id === selectedId)
+      if (referral) {
+        setSelectedReferral(referral)
+      }
+    }
+  }, [selectedId, referrals])
 
   const filteredReferrals = referrals
     .filter((referral) => {
@@ -77,6 +91,20 @@ export default function ReferralsPage() {
             title: "Referral Status Updated",
             description: `Status changed to ${newStatus} for ${ref.patientName}`,
           })
+
+          // Create notification for status update
+          dispatch({
+            type: "ADD_NOTIFICATION",
+            payload: {
+              id: uuidv4(),
+              message: `Status updated to ${newStatus} for ${ref.patientName}'s referral`,
+              timestamp: new Date().toISOString(),
+              read: false,
+              type: "status_update",
+              referralId: ref.id,
+            },
+          })
+
           return updatedRef
         }
         return ref
@@ -101,14 +129,9 @@ export default function ReferralsPage() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Referrals</h1>
-        <div className="flex gap-2">
-          <Button variant="outline" size="icon" onClick={() => router.push("/referrals/new")}>
-            <Plus className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="icon">
-            <Bell className="h-4 w-4" />
-          </Button>
-        </div>
+        <Button variant="outline" size="icon" onClick={() => router.push("/referrals/new")}>
+          <Plus className="h-4 w-4" />
+        </Button>
       </div>
 
       <div className="mb-4 flex flex-wrap gap-4 bg-white p-4 rounded-lg shadow-sm">

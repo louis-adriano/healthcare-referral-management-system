@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { v4 as uuidv4 } from "uuid"
 import type { Referral } from "@/app/utils/mockReferrals"
+import { useNotifications } from "../context/notifications-context"
 
 export function PatientReferralForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -22,6 +23,7 @@ export function PatientReferralForm() {
   const [copyFeedback, setCopyFeedback] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
+  const { dispatch } = useNotifications()
 
   const {
     register,
@@ -52,6 +54,19 @@ export function PatientReferralForm() {
     const existingReferrals: Referral[] = JSON.parse(localStorage.getItem("referrals") || "[]")
     const updatedReferrals = [newReferral, ...existingReferrals]
     localStorage.setItem("referrals", JSON.stringify(updatedReferrals))
+
+    // Create notification for new referral
+    dispatch({
+      type: "ADD_NOTIFICATION",
+      payload: {
+        id: uuidv4(),
+        message: `New referral created for ${newReferral.patientName}`,
+        timestamp: new Date().toISOString(),
+        read: false,
+        type: "new_referral",
+        referralId: newReferral.id,
+      },
+    })
 
     toast({
       title: "Referral Submitted",
