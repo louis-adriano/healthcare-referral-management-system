@@ -3,6 +3,7 @@ import { Geist } from "next/font/google"
 import "./globals.css"
 import { Header } from "./components/Header"
 import { Sidebar } from "./components/Sidebar"
+import Footer from "./components/Footer"
 import { GoogleMapsScript } from "./components/GoogleMapsScript"
 
 const geist = Geist({
@@ -21,17 +22,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={geist.className}>
-      <body>
-        <div className="flex h-screen">
+      <body className="flex h-screen flex-col">
+        <div className="flex h-full">
           <Sidebar />
           <div className="flex-1 flex flex-col">
             <Header />
             <main className="flex-1 overflow-y-auto bg-gray-200">{children}</main>
+            <Footer /> 
           </div>
         </div>
         <GoogleMapsScript />
       </body>
     </html>
-  )
+  );
 }
 
