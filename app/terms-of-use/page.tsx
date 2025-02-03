@@ -1,4 +1,11 @@
+import { notFound } from "next/navigation";
+
 export default function TermsOfUse() {
+  const isError = false; // Replace with actual error check
+  
+  if (isError) {
+    notFound(); // or display a custom error message
+  }
     const lastUpdated = "2025-02-03"; // Update this date when changes are made
   
     return (
@@ -11,6 +18,14 @@ export default function TermsOfUse() {
           <ul className="list-disc pl-6">
             <li>You are responsible for maintaining the confidentiality of patient data.</li>
             <li>Do not share your login credentials with others.</li>
+          </ul>
+        </section>
+
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold mb-2">User Responsibilities</h2>
+          <ul className="list-disc pl-6">
+            <li>Users must ensure their login credentials are kept secure.</li>
+            <li>Users must not share patient data without consent.</li>
           </ul>
         </section>
   

@@ -1,4 +1,11 @@
+import { notFound } from "next/navigation";
+
 export default function PrivacyPolicy() {
+  const isError = false; // Replace with actual error check
+  
+  if (isError) {
+    notFound(); // or display a custom error message
+  }
     const lastUpdated = "2025-02-03"; // Update this date when changes are made
   
     return (
@@ -13,10 +20,20 @@ export default function PrivacyPolicy() {
             <li>Data is stored securely and used in compliance with data protection regulations.</li>
           </ul>
         </section>
+
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold mb-2">Data Usage</h2>
+          <p>We use collected data for improving the quality of services and ensuring compliance with healthcare regulations.</p>
+        </section>
   
         <section className="mb-6">
           <h2 className="text-xl font-semibold mb-2">Data Sharing</h2>
           <p>We do not share your data with third parties without your consent.</p>
+        </section>
+
+        <section className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">Compliance</h2>
+        <p>We comply with relevant data protection regulations, including GDPR and HIPAA.</p>
         </section>
       </div>
     );
