@@ -9,7 +9,7 @@ export default function PrivacyPolicy() {
     const lastUpdated = "2025-02-03"; // Update this date when changes are made
   
     return (
-      <div className="container mx-auto p-4">
+      <div className="ml-6 mr-12 py-4 mt-4 mb-4">
         <h1 className="text-2xl font-bold mb-4">Privacy Policy</h1>
         <p className="text-sm text-gray-500 mb-4">Last Updated: {lastUpdated}</p>
   
