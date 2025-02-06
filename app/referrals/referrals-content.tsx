@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Plus, ArrowLeft, Copy } from "lucide-react"
+import { Plus, ArrowLeft, Copy, ChevronLeft, ChevronRight } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useNotifications } from "../context/notifications-context"
 import { v4 as uuidv4 } from "uuid"
+
+const ITEMS_PER_PAGE = 12
 
 export default function ReferralsContent() {
   const [referrals, setReferrals] = useState<Referral[]>([])
@@ -21,6 +23,7 @@ export default function ReferralsContent() {
   const [sortBy, setSortBy] = useState<string>("dateDesc")
   const [showJson, setShowJson] = useState(false)
   const [copyFeedback, setCopyFeedback] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
   const { toast } = useToast()
   const router = useRouter()
   const { dispatch } = useNotifications()
@@ -82,6 +85,9 @@ export default function ReferralsContent() {
       }
     })
 
+  const totalPages = Math.ceil(filteredReferrals.length / ITEMS_PER_PAGE)
+  const paginatedReferrals = filteredReferrals.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+
   const handleStatusChange = (referralId: string, newStatus: Referral["status"]) => {
     setReferrals(
       referrals.map((ref) => {
@@ -92,7 +98,6 @@ export default function ReferralsContent() {
             description: `Status changed to ${newStatus} for ${ref.patientName}`,
           })
 
-          // Create notification for status update
           dispatch({
             type: "ADD_NOTIFICATION",
             payload: {
@@ -123,6 +128,14 @@ export default function ReferralsContent() {
       setCopyFeedback(true)
       setTimeout(() => setCopyFeedback(false), 2000)
     }
+  }
+
+  const goToPreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1))
+  }
+
+  const goToNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
   }
 
   return (
@@ -199,7 +212,7 @@ export default function ReferralsContent() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredReferrals.map((referral) => (
+            {paginatedReferrals.map((referral) => (
               <tr
                 key={referral.id}
                 className="hover:bg-gray-50 cursor-pointer"
@@ -243,6 +256,21 @@ export default function ReferralsContent() {
         </table>
       </div>
 
+      <div className="mt-4 flex justify-between items-center">
+        <div className="text-sm text-gray-700">
+          Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
+          {Math.min(currentPage * ITEMS_PER_PAGE, filteredReferrals.length)} of {filteredReferrals.length} entries
+        </div>
+        <div className="flex space-x-2">
+          <Button variant="outline" size="icon" onClick={goToPreviousPage} disabled={currentPage === 1}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="icon" onClick={goToNextPage} disabled={currentPage === totalPages}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
       <Dialog open={!!selectedReferral} onOpenChange={handleDialogClose}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
@@ -268,30 +296,54 @@ export default function ReferralsContent() {
                       <p className="mt-1">{selectedReferral.patientName}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Status</p>
-                      <Select
-                        onValueChange={(value) => handleStatusChange(selectedReferral.id, value as Referral["status"])}
-                        defaultValue={selectedReferral.status}
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Pending">Pending</SelectItem>
-                          <SelectItem value="In Progress">In Progress</SelectItem>
-                          <SelectItem value="Completed">Completed</SelectItem>
-                          <SelectItem value="Cancelled">Cancelled</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <p className="text-sm font-medium text-gray-500">Email</p>
+                      <p className="mt-1">{selectedReferral.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Phone Number</p>
+                      <p className="mt-1">{selectedReferral.phoneNumber}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Address</p>
+                      <p className="mt-1">{selectedReferral.address}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Medicare Number</p>
+                      <p className="mt-1">{selectedReferral.medicareNumber}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Date of Birth</p>
+                      <p className="mt-1">{selectedReferral.dateOfBirth}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Gender</p>
+                      <p className="mt-1">{selectedReferral.gender}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Date Submitted</p>
                       <p className="mt-1">{selectedReferral.dateSubmitted}</p>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Urgency Level</p>
-                      <p className="mt-1">{selectedReferral.urgencyLevel}</p>
-                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Status</p>
+                    <Select
+                      onValueChange={(value) => handleStatusChange(selectedReferral.id, value as Referral["status"])}
+                      defaultValue={selectedReferral.status}
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Pending">Pending</SelectItem>
+                        <SelectItem value="In Progress">In Progress</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                        <SelectItem value="Cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Urgency Level</p>
+                    <p className="mt-1">{selectedReferral.urgencyLevel}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Reason for Referral</p>

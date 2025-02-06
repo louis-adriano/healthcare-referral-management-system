@@ -60,6 +60,12 @@ export function PatientReferralForm() {
     const newReferral: Referral = {
       id: uuidv4(),
       patientName: `${data.firstName} ${data.lastName}`,
+      email: data.email,
+      phoneNumber: data.phoneNumber,
+      address: data.address,
+      medicareNumber: data.medicareNumber,
+      dateOfBirth: data.dateOfBirth.toISOString().split("T")[0],
+      gender: data.gender,
       dateSubmitted: new Date().toISOString().split("T")[0],
       status: "Pending",
       urgencyLevel: data.urgencyLevel,
@@ -67,7 +73,6 @@ export function PatientReferralForm() {
       clinicalNotes: data.clinicalNotes || "-",
       outcome: "",
       feedback: "",
-      medicareNumber: data.medicareNumber,
     }
 
     const existingReferrals: Referral[] = JSON.parse(localStorage.getItem("referrals") || "[]")
