@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CheckCircle2, Copy } from "lucide-react"
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Switch } from "@/components/ui/switch"
 import { FormSchema, type FormData } from "../utils/formSchema"
 import { usePredictiveAddress } from "../hooks/usePredictiveAddress"
 import { useToast } from "@/hooks/use-toast"
@@ -16,11 +17,13 @@ import { useRouter } from "next/navigation"
 import { v4 as uuidv4 } from "uuid"
 import type { Referral } from "@/app/utils/mockReferrals"
 import { useNotifications } from "../context/notifications-context"
+import { generateSyntheticData } from "../utils/syntheticData"
 
 export function PatientReferralForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [showJson, setShowJson] = useState(false)
   const [copyFeedback, setCopyFeedback] = useState(false)
+  const [usePrePopulatedData, setUsePrePopulatedData] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
   const { dispatch } = useNotifications()
@@ -31,12 +34,27 @@ export function PatientReferralForm() {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(FormSchema),
   })
 
   const { address, predictions, handleAddressChange, handlePredictionSelect } = usePredictiveAddress()
+
+  useEffect(() => {
+    if (usePrePopulatedData) {
+      const syntheticData = generateSyntheticData()
+      Object.entries(syntheticData).forEach(([key, value]) => {
+        setValue(key as keyof FormData, value as any)
+      })
+      // Update the address state for Google Maps API
+      handleAddressChange({ target: { value: syntheticData.address } } as React.ChangeEvent<HTMLInputElement>)
+    } else {
+      reset()
+      handleAddressChange({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>)
+    }
+  }, [usePrePopulatedData, setValue, reset, handleAddressChange])
 
   const onSubmit = async (data: FormData) => {
     const newReferral: Referral = {
@@ -49,13 +67,13 @@ export function PatientReferralForm() {
       clinicalNotes: data.clinicalNotes || "-",
       outcome: "",
       feedback: "",
+      medicareNumber: data.medicareNumber,
     }
 
     const existingReferrals: Referral[] = JSON.parse(localStorage.getItem("referrals") || "[]")
     const updatedReferrals = [newReferral, ...existingReferrals]
     localStorage.setItem("referrals", JSON.stringify(updatedReferrals))
 
-    // Create notification for new referral
     dispatch({
       type: "ADD_NOTIFICATION",
       payload: {
@@ -100,6 +118,16 @@ export function PatientReferralForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-6 rounded-lg shadow">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Patient Referral Form</h2>
+        <div className="flex items-center space-x-2">
+          <Switch id="use-prepopulated-data" checked={usePrePopulatedData} onCheckedChange={setUsePrePopulatedData} />
+          <label htmlFor="use-prepopulated-data" className="text-sm font-medium">
+            Use pre-populated data
+          </label>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label htmlFor="firstName" className="block text-sm font-bold text-gray-700">
@@ -109,7 +137,7 @@ export function PatientReferralForm() {
             id="firstName"
             placeholder="Enter patient's first name"
             {...register("firstName")}
-            className={errors.firstName ? "border-red-500" : ""}
+            className={`${errors.firstName ? "border-red-500" : ""} ${usePrePopulatedData ? "bg-yellow-50" : ""}`}
           />
           {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName.message}</p>}
         </div>
@@ -121,7 +149,7 @@ export function PatientReferralForm() {
             id="lastName"
             placeholder="Enter patient's last name"
             {...register("lastName")}
-            className={errors.lastName ? "border-red-500" : ""}
+            className={`${errors.lastName ? "border-red-500" : ""} ${usePrePopulatedData ? "bg-yellow-50" : ""}`}
           />
           {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName.message}</p>}
         </div>
@@ -142,7 +170,7 @@ export function PatientReferralForm() {
               value={field.value ? field.value.toISOString().split("T")[0] : ""}
               onChange={(e) => field.onChange(new Date(e.target.value))}
               max={new Date().toISOString().split("T")[0]}
-              className={errors.dateOfBirth ? "border-red-500" : ""}
+              className={`${errors.dateOfBirth ? "border-red-500" : ""} ${usePrePopulatedData ? "bg-yellow-50" : ""}`}
             />
           )}
         />
@@ -158,7 +186,9 @@ export function PatientReferralForm() {
           name="gender"
           render={({ field }) => (
             <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <SelectTrigger className={errors.gender ? "border-red-500" : ""}>
+              <SelectTrigger
+                className={`${errors.gender ? "border-red-500" : ""} ${usePrePopulatedData ? "bg-yellow-50" : ""}`}
+              >
                 <SelectValue placeholder="Select gender" />
               </SelectTrigger>
               <SelectContent>
@@ -181,7 +211,7 @@ export function PatientReferralForm() {
           type="email"
           placeholder="Enter patient's email"
           {...register("email")}
-          className={errors.email ? "border-red-500" : ""}
+          className={`${errors.email ? "border-red-500" : ""} ${usePrePopulatedData ? "bg-yellow-50" : ""}`}
         />
         {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
       </div>
@@ -194,7 +224,7 @@ export function PatientReferralForm() {
           id="phoneNumber"
           placeholder="Enter Australian phone number"
           {...register("phoneNumber")}
-          className={errors.phoneNumber ? "border-red-500" : ""}
+          className={`${errors.phoneNumber ? "border-red-500" : ""} ${usePrePopulatedData ? "bg-yellow-50" : ""}`}
         />
         {errors.phoneNumber && <p className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</p>}
       </div>
@@ -211,7 +241,7 @@ export function PatientReferralForm() {
             setValue("address", e.target.value)
           }}
           placeholder="Start typing an Australian address"
-          className={errors.address ? "border-red-500" : ""}
+          className={`${errors.address ? "border-red-500" : ""} ${usePrePopulatedData ? "bg-yellow-50" : ""}`}
         />
         {predictions.length > 0 && (
           <ul className="mt-1 border border-gray-200 rounded-md">
@@ -233,6 +263,19 @@ export function PatientReferralForm() {
       </div>
 
       <div>
+        <label htmlFor="medicareNumber" className="block text-sm font-bold text-gray-700">
+          Medicare Number
+        </label>
+        <Input
+          id="medicareNumber"
+          placeholder="Enter Medicare number"
+          {...register("medicareNumber")}
+          className={`${errors.medicareNumber ? "border-red-500" : ""} ${usePrePopulatedData ? "bg-yellow-50" : ""}`}
+        />
+        {errors.medicareNumber && <p className="mt-1 text-sm text-red-500">{errors.medicareNumber.message}</p>}
+      </div>
+
+      <div>
         <label htmlFor="reasonForReferral" className="block text-sm font-bold text-gray-700">
           Reason for Referral
         </label>
@@ -240,7 +283,7 @@ export function PatientReferralForm() {
           id="reasonForReferral"
           placeholder="Describe the reason for referral"
           {...register("reasonForReferral")}
-          className={errors.reasonForReferral ? "border-red-500" : ""}
+          className={`${errors.reasonForReferral ? "border-red-500" : ""} ${usePrePopulatedData ? "bg-yellow-50" : ""}`}
         />
         {errors.reasonForReferral && <p className="mt-1 text-sm text-red-500">{errors.reasonForReferral.message}</p>}
       </div>
@@ -254,7 +297,11 @@ export function PatientReferralForm() {
           name="urgencyLevel"
           render={({ field }) => (
             <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <SelectTrigger className={errors.urgencyLevel ? "border-red-500" : ""}>
+              <SelectTrigger
+                className={`${errors.urgencyLevel ? "border-red-500" : ""} ${
+                  usePrePopulatedData ? "bg-yellow-50" : ""
+                }`}
+              >
                 <SelectValue placeholder="Select urgency level" />
               </SelectTrigger>
               <SelectContent>
@@ -272,7 +319,12 @@ export function PatientReferralForm() {
         <label htmlFor="clinicalNotes" className="block text-sm font-bold text-gray-700">
           Clinical Notes
         </label>
-        <Textarea id="clinicalNotes" placeholder="Add any additional clinical notes" {...register("clinicalNotes")} />
+        <Textarea
+          id="clinicalNotes"
+          placeholder="Add any additional clinical notes"
+          {...register("clinicalNotes")}
+          className={usePrePopulatedData ? "bg-yellow-50" : ""}
+        />
       </div>
 
       <div className="border-2 border-gray-300 rounded-md p-4 bg-gray-50">
