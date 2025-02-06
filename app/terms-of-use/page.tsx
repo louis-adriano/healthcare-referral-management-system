@@ -36,7 +36,7 @@ export default function TermsOfUse() {
         <h2 className="text-xl font-semibold mb-2">3.	Confidentiality</h2>
         <p>All information provided in the referral form, including personal, medical, 
           and contact details, is confidential and will be used solely for the purpose of referral. 
-          This information will not be disclosed to any third parties without the patient's 
+          This information will not be disclosed to any third parties without the patient&rsquo;s 
           consent unless required by law or for medical purposes.</p>
       </section>
 
