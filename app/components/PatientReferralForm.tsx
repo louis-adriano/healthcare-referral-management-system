@@ -46,7 +46,7 @@ export function PatientReferralForm() {
     if (usePrePopulatedData) {
       const syntheticData = generateSyntheticData()
       Object.entries(syntheticData).forEach(([key, value]) => {
-        setValue(key as keyof FormData, value as any)
+        setValue(key as keyof FormData, value as FormData[keyof FormData])
       })
       // Update the address state for Google Maps API
       handleAddressChange({ target: { value: syntheticData.address } } as React.ChangeEvent<HTMLInputElement>)
