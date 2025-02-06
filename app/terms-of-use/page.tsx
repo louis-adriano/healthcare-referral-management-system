@@ -9,18 +9,18 @@ export default function TermsOfUse() {
   const lastUpdated = "2025-02-03" // Update this date when changes are made
 
   return (
-    <div className="ml-6 mr-12 py-4 mt-4 mb-4">
+    <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Terms of Use</h1>
       <p className="text-sm text-gray-500 mb-4">Last Updated: {lastUpdated}</p>
-      <p>By submitting the referral form, you agree to the following terms and conditions:</p>
+      <p>By submitting this referral form, you agree to the following terms and conditions:</p>
       <br></br>
 
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">1.	Purpose of Referral</h2>
         <p>This referral form is intended to facilitate the transfer of patient information 
           for medical consultation, treatment, or further assessment by a specialist. 
-          By completing this form, you consent to the sharing of necessary health 
-          information between the referring GP and the specialist.</p>
+          By completing this form, you consent to the sharing of necessary health information 
+          between the referring GP and the specialist.</p>
       </section>
 
       <section className="mb-6">
