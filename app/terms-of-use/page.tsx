@@ -12,6 +12,8 @@ export default function TermsOfUse() {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Terms of Use</h1>
       <p className="text-sm text-gray-500 mb-4">Last Updated: {lastUpdated}</p>
+      <p>By submitting the referral form, you agree to the following terms and conditions:</p>
+      <br></br>
 
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">Rules and Responsibilities</h2>
