@@ -373,7 +373,26 @@ export function PatientReferralForm() {
       </div>
       {showJson && (
         <div className="mt-4 p-4 bg-gray-100 rounded-md">
-          <pre className="whitespace-pre-wrap">{JSON.stringify(watch(), null, 2)}</pre>
+          <pre className="whitespace-pre-wrap">
+            {JSON.stringify(
+              {
+                firstName: watch("firstName"),
+                lastName: watch("lastName"),
+                dateOfBirth: watch("dateOfBirth"),
+                gender: watch("gender"),
+                email: watch("email"),
+                phoneNumber: watch("phoneNumber"),
+                address: watch("address"),
+                medicareNumber: watch("medicareNumber"),
+                reasonForReferral: watch("reasonForReferral"),
+                urgencyLevel: watch("urgencyLevel"),
+                clinicalNotes: watch("clinicalNotes"),
+                consentGiven: watch("consentGiven"),
+              },
+              null,
+              2,
+            )}
+          </pre>
         </div>
       )}
     </form>

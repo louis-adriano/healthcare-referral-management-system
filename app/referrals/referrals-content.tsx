@@ -381,7 +381,28 @@ export default function ReferralsContent() {
                   <textarea
                     readOnly
                     className="w-full h-48 p-2 text-sm font-mono bg-gray-100 border rounded resize-none"
-                    value={JSON.stringify(selectedReferral, null, 2)}
+                    value={JSON.stringify(
+                      {
+                        id: selectedReferral.id,
+                        firstName: selectedReferral.patientName.split(" ")[0],
+                        lastName: selectedReferral.patientName.split(" ").slice(1).join(" "),
+                        dateOfBirth: selectedReferral.dateOfBirth,
+                        gender: selectedReferral.gender,
+                        email: selectedReferral.email,
+                        phoneNumber: selectedReferral.phoneNumber,
+                        address: selectedReferral.address,
+                        medicareNumber: selectedReferral.medicareNumber,
+                        dateSubmitted: selectedReferral.dateSubmitted,
+                        reasonForReferral: selectedReferral.reasonForReferral,
+                        urgencyLevel: selectedReferral.urgencyLevel,
+                        clinicalNotes: selectedReferral.clinicalNotes,
+                        status: selectedReferral.status,
+                        outcome: selectedReferral.outcome,
+                        feedback: selectedReferral.feedback,
+                      },
+                      null,
+                      2,
+                    )}
                   />
                 </div>
               )}
