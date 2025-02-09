@@ -10,14 +10,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Switch } from "@/components/ui/switch"
-import { FormSchema, type FormData } from "../utils/formSchema"
+import { FormSchema, type FormData } from "../lib/formSchema"
 import { usePredictiveAddress } from "../hooks/usePredictiveAddress"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { v4 as uuidv4 } from "uuid"
-import type { Referral } from "@/app/utils/mockReferrals"
+import type { Referral } from "@/app/lib/mockReferrals"
 import { useNotifications } from "../context/notifications-context"
-import { generateSyntheticData } from "../utils/syntheticData"
+import { generateSyntheticData } from "../lib/syntheticData"
+import type React from "react" // Added import for React
 
 export function PatientReferralForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)

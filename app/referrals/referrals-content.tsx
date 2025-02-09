@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { mockReferrals, type Referral } from "@/app/utils/mockReferrals"
+import { mockReferrals, type Referral } from "@/app/lib/mockReferrals"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -141,7 +141,7 @@ export default function ReferralsContent() {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Referrals</h1>
+        <h1 className="text-2xl font-bold">Submitted Referrals</h1>
         <Button variant="outline" size="icon" onClick={() => router.push("/referrals/new")}>
           <Plus className="h-4 w-4" />
         </Button>
