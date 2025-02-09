@@ -20,6 +20,7 @@ type NotificationsAction =
   | { type: "MARK_AS_READ"; payload: string }
   | { type: "MARK_ALL_AS_READ" }
   | { type: "REMOVE_NOTIFICATION"; payload: string }
+  | { type: "REMOVE_ALL_NOTIFICATIONS" }
 
 const NotificationsContext = createContext<{
   state: NotificationsState
@@ -46,6 +47,9 @@ const notificationsReducer = (state: NotificationsState, action: NotificationsAc
       const filteredNotifications = state.notifications.filter((notification) => notification.id !== action.payload)
       localStorage.setItem("notifications", JSON.stringify(filteredNotifications))
       return { notifications: filteredNotifications }
+    case "REMOVE_ALL_NOTIFICATIONS":
+      localStorage.removeItem("notifications")
+      return { notifications: [] }
     default:
       return state
   }

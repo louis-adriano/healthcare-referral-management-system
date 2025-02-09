@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell } from "lucide-react"
+import { Bell, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useNotifications } from "../context/notifications-context"
@@ -8,15 +8,33 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import type { Notification } from "../context/notifications-context"
+import { Separator } from "@/components/ui/separator"
+import { useState } from "react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export function NotificationsPopover() {
   const { state, dispatch } = useNotifications()
   const router = useRouter()
   const unreadCount = state.notifications.filter((n) => !n.read).length
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   const handleNotificationClick = (notification: Notification) => {
     dispatch({ type: "MARK_AS_READ", payload: notification.id })
     router.push(`/referrals?id=${notification.referralId}`)
+  }
+
+  const handleDeleteAllNotifications = () => {
+    dispatch({ type: "REMOVE_ALL_NOTIFICATIONS" })
+    setIsDeleteDialogOpen(false)
   }
 
   return (
@@ -71,7 +89,37 @@ export function NotificationsPopover() {
             </div>
           )}
         </ScrollArea>
+        {state.notifications.length > 0 && (
+          <>
+            <Separator className="my-2" />
+            <div className="flex justify-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-destructive"
+                onClick={() => setIsDeleteDialogOpen(true)}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Delete all notifications</span>
+              </Button>
+            </div>
+          </>
+        )}
       </PopoverContent>
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete all your notifications.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteAllNotifications}>Delete All</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Popover>
   )
 }
