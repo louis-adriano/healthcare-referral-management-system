@@ -29,5 +29,45 @@ This project is a Healthcare Referral Management System designed to streamline t
 
 ## Getting Started
 
-1. Clone the repository:
+1. **Install Node.js and npm**
+   - Download and install Node.js (which includes npm) from [nodejs.org](https://nodejs.org/)
+   - Verify the installation by running `node --version` and `npm --version` in your terminal
+
+2. **Clone the repository**
+   \`\`\`
+   git clone https://github.com/your-username/healthcare-referral-management-system.git
+   cd healthcare-referral-management-system
+   \`\`\`
+
+3. **Install dependencies**
+   \`\`\`
+   npm install
+   \`\`\`
+
+4. **Set up environment variables**
+   - Copy the `.env.example` file to `.env.local`:
+     \`\`\`
+     cp .env.example .env.local
+     \`\`\`
+   - Open `.env.local` and add your Google Maps API key:
+     \`\`\`
+     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
+     \`\`\`
+
+5. **Set up Google Maps API**
+   - Go to the [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select an existing one
+   - Enable the Maps JavaScript API and Places API for your project
+   - Create an API key and restrict it to these APIs
+   - Copy the API key and paste it into your `.env.local` file
+
+6. **Run the development server**
+   \`\`\`
+   npm run dev
+   \`\`\`
+
+7. **Open the application**
+   - Open your browser and navigate to `http://localhost:3000`
+
+You should now see the Healthcare Referral Management System running locally on your machine.
 
