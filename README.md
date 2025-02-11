@@ -35,7 +35,7 @@ This project is a Healthcare Referral Management System designed to streamline t
 
 2. **Clone the repository**
    \`\`\`
-   git clone https://github.com/your-username/healthcare-referral-management-system.git
+   git clone https://github.com/louis-adriano/healthcare-referral-management-system.git
    cd healthcare-referral-management-system
    \`\`\`
 
@@ -49,25 +49,62 @@ This project is a Healthcare Referral Management System designed to streamline t
      \`\`\`
      cp .env.example .env.local
      \`\`\`
-   - Open `.env.local` and add your Google Maps API key:
+   - Open `.env.local` and add your environment variables:
      \`\`\`
+     NEXTAUTH_URL=[http://localhost:3000](http://localhost:3000)NEXTAUTH_SECRET=your_nextauth_secret_here
+     GOOGLE_CLIENT_ID=your_google_client_id_here
+     GOOGLE_CLIENT_SECRET=your_google_client_secret_here
      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
      \`\`\`
 
-5. **Set up Google Maps API**
-   - Go to the [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project or select an existing one
-   - Enable the Maps JavaScript API and Places API for your project
-   - Create an API key and restrict it to these APIs
-   - Copy the API key and paste it into your `.env.local` file
 
-6. **Run the development server**
+5. **Set up Google OAuth 2.0**
+- Go to the [Google Cloud Console](https://console.cloud.google.com/)
+- Create a new project or select an existing one
+- Enable the Google+ API
+- Create OAuth 2.0 credentials (Client ID and Client Secret)
+- Add authorized redirect URIs:
+- `http://localhost:3000/api/auth/callback/google` (for development)
+- `https://healthcare-referral-management-system.vercel.app/api/auth/callback/google` (for production)
+
+6. **Set up Google Maps API**
+- In the same Google Cloud Console project, enable the Maps JavaScript API and Places API
+- Create an API key and restrict it to these APIs
+- Add your domain to the list of allowed referrers
+
+7. **Run the development server**
    \`\`\`
    npm run dev
    \`\`\`
 
-7. **Open the application**
-   - Open your browser and navigate to `http://localhost:3000`
+
+8. **Open the application**
+- Open your browser and navigate to `http://localhost:3000`
 
 You should now see the Healthcare Referral Management System running locally on your machine.
 
+## Usage
+
+- Users can log in using their Google account
+- Once logged in, users will be directed to the dashboard
+- From the dashboard, users can create new referrals or view existing ones
+- The referral form includes address autocomplete powered by Google Maps API
+- Users can view and manage referrals, including updating their status
+- Notifications will appear for new referrals and status updates
+
+## Deployment
+
+This project is set up for easy deployment on Vercel. Follow these steps:
+
+1. Push your code to a GitHub repository
+2. Import your project into Vercel
+3. Set up the environment variables in the Vercel project settings
+4. Deploy!
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -6,6 +6,7 @@ import { Sidebar } from "./components/Sidebar"
 import Footer from "./components/Footer"
 import { GoogleMapsScript } from "./components/GoogleMapsScript"
 import { NotificationsProvider } from "./context/notifications-context"
+import { AuthProvider } from "./components/AuthProvider"
 import type React from "react"
 
 const geist = Geist({
@@ -25,16 +26,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={geist.className}>
       <body className="flex h-screen flex-col">
-        <NotificationsProvider>
-          <div className="flex h-full">
-            <Sidebar />
-            <div className="flex-1 flex flex-col">
-              <Header />
-              <main className="flex-1 overflow-y-auto bg-gray-200">{children}</main>
-              <Footer />
+        <AuthProvider>
+          <NotificationsProvider>
+            <div className="flex h-full">
+              <Sidebar />
+              <div className="flex-1 flex flex-col">
+                <Header />
+                <main className="flex-1 overflow-y-auto bg-gray-200">{children}</main>
+                <Footer />
+              </div>
             </div>
-          </div>
-        </NotificationsProvider>
+          </NotificationsProvider>
+        </AuthProvider>
         <GoogleMapsScript />
       </body>
     </html>

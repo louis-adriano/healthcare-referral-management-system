@@ -1,7 +1,30 @@
+"use client"
+
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { LoadingAuth } from "@/components/LoadingAuth"
 
 export default function Home() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login")
+    }
+  }, [status, router])
+
+  if (status === "loading") {
+    return <LoadingAuth />
+  }
+
+  if (!session) {
+    return null
+  }
+
   return (
     <div className="container mx-auto p-6">
       <div className="grid gap-6 md:grid-cols-2">
