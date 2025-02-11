@@ -22,7 +22,8 @@ export const authOptions: NextAuthOptions = {
       else if (new URL(url).origin === baseUrl) return url
       return baseUrl
     },
-    async jwt({ token, account, profile }) {
+    async jwt({ token, account }) {
+      // Remove unused 'profile' parameter
       if (isDev) console.log("[Auth] JWT callback:", { token, account })
       if (account) {
         token.accessToken = account.access_token

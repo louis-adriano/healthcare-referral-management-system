@@ -32,7 +32,6 @@ export default function LoginPage() {
   const searchParams = useSearchParams()
   const { toast } = useToast()
   const [error, setError] = useState<string | null>(null)
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
 
   const {
     register,
@@ -49,7 +48,7 @@ export default function LoginPage() {
     }
   }, [searchParams])
 
-  const onSubmit = async (data: LoginData) => {
+  const onSubmit = async () => {
     setIsLoading((prev) => ({ ...prev, credentials: true }))
     toast({
       title: "Login Attempt",
